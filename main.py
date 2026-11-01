@@ -183,16 +183,13 @@ if not account: #prompts user to make account
 elif account.get("logout") == True: #if user already has an account and logged out
     username = account.get("username")
     password = account.get("password")
-    
     passwordauth = input("Input password: ")
     countauth = 0
     correct = False
-    
     while passwordauth != password and countauth < 2: #3 tries for password auth
         print("Incorrect password. Try again.")
         passwordauth = input("Input password: ")
         countauth += 1
-        
     if passwordauth == password:
         correct = True
         account["logout"] = False
