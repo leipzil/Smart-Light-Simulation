@@ -1,0 +1,191 @@
+Class Settings
+	Procedure Settings (self, name, status, mode, brightness)
+    self.name ← name
+    self.status ← status
+    self.mode ← mode
+    self.brightness ← brightness 
+
+	Procedure display_info ()
+		output("Name: ", name)
+		output("Status: ", status)
+		output("Mode: ", mode)
+		output("Brightness: ", brightness, "%")
+
+	Function update_settings (setting_index, rooms)
+		if (setting_index = 1) then
+			input(new_name)
+			while (new_name = "") do
+				output("Name can't be empty.")
+				input(new_name)
+			index ← linear_search(rooms, new_name)
+			if (index <> -1) and (name already used by another room) then
+				output("A room with that name already exists.")
+				return false
+			name ← new_name
+		else if (setting_index = 2) then
+			if (status = "OFF") then
+				status ← "ON"
+			else
+				status ← "OFF"
+		else if (setting_index = 3) then
+			if (mode = "WARM") then
+				mode ← "COOL"
+			else
+				mode ← "WARM"
+		else
+			value ← get_int("Change brightness to: ")
+			while (value < 0) or (value > 100) do
+				output("Brightness must be between 0 and 100.")
+				value ← get_int("Change brightness to: ")
+			brightness ← value
+		return true
+End Class
+
+Function get_int (prompt)
+	//keep asking with prompt until the input is an integer
+	//return the integer
+
+Function linear_search (arr, target)
+	i traversal [0..length(arr)-1]
+		if (arr[i].name = target) then
+			return i
+	return -1
+
+Procedure save_data (rooms, account)
+	//save account and rooms to file
+
+Function load_data ()
+	if file exists then
+		return account and rooms from file
+	else
+		return empty account, empty rooms
+
+Procedure main (rooms, account)
+	n ← length(rooms)
+	menu ← 0
+	while (menu <> 4) do
+		output("=====MENU=====")
+		output("1. View rooms")
+		output("2. Add room")
+		output("3. Remove room")
+		output("4. Exit")
+		menu ← get_int("Menu: ")
+
+		if (menu = 1) then
+			if (n > 0) then
+				output("ROOM MENU")
+				i traversal [0..n-1]
+					output(i+1, ". ", rooms[i].name)
+				output(n+1, ". Back")
+				room_choice ← get_int("Choice: ")
+				while (room_choice < 1) or (room_choice > n+1) do
+					output("Invalid input. Please choose between 1-", n+1)
+					room_choice ← get_int("Choice: ")
+				if (room_choice <> n+1) then
+					output("CURRENT SETTINGS")
+					rooms[room_choice-1].display_info()
+					output("1. Change room name")
+					output("2. Turn ON/OFF")
+					output("3. Change light mode to WARM/COOL")
+					output("4. Adjust brightness")
+					output("5. Back")
+					setting_choice ← get_int("Change setting (1-5): ")
+					while (setting_choice < 1) or (setting_choice > 5) do
+						output("Invalid input. Please choose number between 1-5.")
+						setting_choice ← get_int("Change setting (1-5): ")
+					if (setting_choice <> 5) then
+						if (rooms[room_choice-1].update_settings(setting_choice, rooms)) then
+							output("Settings for", rooms[room_choice-1].name, "has been updated.")
+							save_data(rooms, account)
+			else
+				output("There are no rooms. Please add a room first.")
+
+		else if (menu = 2) then
+			if (n < 5) then
+				input(new_name)
+				while (new_name = "") or (linear_search(rooms, new_name) <> -1) do
+					if (new_name = "") then
+						output("Name can't be empty.")
+					else
+						output("A room with that name already exists.")
+					input(new_name)
+				add Settings(new_name, "ON", "COOL", 100) to rooms
+				output(new_name, " has been added with default settings.")
+				save_data(rooms, account)
+				n ← n + 1
+			else
+				output("You have reached the max number of rooms. Please remove a room first.")
+
+		else if (menu = 3) then
+			if (n > 0) then
+				input(target)
+				index ← linear_search(rooms, target)
+				if (index <> -1) then
+					input(choice)
+					while (choice <> "Y") and (choice <> "N") do
+						output("Invalid input. Please choose 'Y' or 'N'.")
+						input(choice)
+					if (choice = "Y") then
+						output(rooms[index].name, " has been deleted.")
+						remove rooms[index]
+						save_data(rooms, account)
+						n ← n - 1
+					else
+						output("Action cancelled.")
+				else
+					output("Room not found.")
+			else
+				output("There are currently no rooms. Please add a room first.")
+
+		else if (menu = 4) then
+	    input(logout_user)
+			while (logout_user <> "Y") and (logout_user <> "N") do
+				output("Invalid input")
+				input(logout_user)
+			if (logout_user = "Y") then
+				account.logout ← true
+				save_data(rooms, account)
+
+		else
+			output("Invalid option. Please choose between 1-4")
+
+//MAIN PROGRAM
+account, rooms ← load_data()
+
+if (account is empty) then
+	input(username)
+	while (username = "") do
+		output("Username can't be empty.")
+		input(username)
+	input(password)
+	input(passwordauth)
+	while (password = "") or (password <> passwordauth) do
+		output("Password is empty or doesn't match.")
+		input(password)
+		input(passwordauth)
+	account ← username, password, logout = false
+	save_data(rooms, account)
+	correct ← true
+	output("Welcome, ", username, "!")
+
+else if (account.logout = true) then
+	input(passwordauth)
+	countauth ← 0
+	correct ← false
+	while (passwordauth <> account.password) and (countauth < 2) do
+		output("Incorrect password. Try again.")
+		input(passwordauth)
+		countauth ← countauth + 1
+	if (passwordauth = account.password) then
+		correct ← true
+		account.logout ← false
+		save_data(rooms, account)
+		output("Welcome back, ", account.username)
+
+else
+	correct ← true
+
+if (correct = true) then
+	main(rooms, account)
+else
+	output("Too many incorrect attempts. Access denied.")
