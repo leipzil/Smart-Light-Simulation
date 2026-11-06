@@ -12,7 +12,7 @@ class Settings:
         self.name = name
         self.status = status #ON/OFF
         self.mode = mode #COOL/WARM
-        self.brightness = brightness #0-100
+        self.brightness = brightness #1-100
 
     def display_info(self):
         print(f"""Name: {self.name}
@@ -35,11 +35,17 @@ Brightness: {self.brightness}%
         elif setting_index == 2:
             self.status = "ON" if self.status == "OFF" else "OFF"
         elif setting_index == 3:
+            if self.status == "OFF":
+                print("The light is off. Turn it on first.")
+                return False
             self.mode = "COOL" if self.mode == "WARM" else "WARM"
         else:
+            if self.status == "OFF":
+                print("The light is off. Turn it on first.")
+                return False
             value = get_int("Change brightness to: ")
-            while not 0 <= value <= 100:
-                print("Brightness must be between 0 and 100.")
+            while not 0 < value <= 100:
+                print("Brightness must be between 1 and 100.")
                 value = get_int("Change brightness to: ")
             self.brightness = value
         return True #a setting was changed
