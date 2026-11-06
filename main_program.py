@@ -28,7 +28,7 @@ Brightness: {self.brightness}%
                 print("Name can't be empty.")
                 new_name = input("New name: ").strip().title()
             index = linear_search(rooms, new_name)
-            if index != -1 and rooms[index] is not self: # if name already used by different room
+            if index != -1: # if name already used by different room
                 print("A room with that name already exists.")
                 return False #nothing changed
             self.name = new_name
