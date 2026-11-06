@@ -1,9 +1,9 @@
 Class Settings
 	Procedure Settings (self, name, status, mode, brightness)
-    self.name ← name
-    self.status ← status
-    self.mode ← mode
-    self.brightness ← brightness 
+	    self.name ← name
+	    self.status ← status
+	    self.mode ← mode
+	    self.brightness ← brightness 
 
 	Procedure display_info ()
 		output("Name: ", name)
@@ -18,7 +18,7 @@ Class Settings
 				output("Name can't be empty.")
 				input(new_name)
 			index ← linear_search(rooms, new_name)
-			if (index <> -1) and (name already used by another room) then
+			if (index <> -1) then
 				output("A room with that name already exists.")
 				return false
 			name ← new_name
@@ -28,14 +28,20 @@ Class Settings
 			else
 				status ← "OFF"
 		else if (setting_index = 3) then
+			if (status = "OFF") then
+				output("Room must be turned on first.")
+				return false
 			if (mode = "WARM") then
 				mode ← "COOL"
 			else
 				mode ← "WARM"
 		else
+			if (status = "OFF") then
+				output("Room must be turned on first.")
+				return false
 			value ← get_int("Change brightness to: ")
-			while (value < 0) or (value > 100) do
-				output("Brightness must be between 0 and 100.")
+			while (value < 1) or (value > 100) do
+				output("Brightness must be between 1 and 100.")
 				value ← get_int("Change brightness to: ")
 			brightness ← value
 		return true
